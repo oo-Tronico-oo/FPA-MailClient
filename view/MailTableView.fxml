@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxWidth="1.7976931348623157E308" prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MailTableViewController">
+   <children>
+      <TableView fx:id="table" maxWidth="1.7976931348623157E308" minHeight="200.0" prefHeight="250.0">
+         <columns>
+            <TableColumn editable="false" prefWidth="53.0" text="Priority" />
+            <TableColumn editable="false" prefWidth="123.0" text="Received" />
+            <TableColumn editable="false" prefWidth="52.0" text="Read" />
+            <TableColumn editable="false" prefWidth="299.0" text="Sender" />
+            <TableColumn editable="false" maxWidth="289.0" prefWidth="281.0" text="Subject" />
+         </columns>
+      </TableView>
+      <HBox fillHeight="false" prefHeight="31.0">
+         <children>
+            <Button fx:id="buttonReply" mnemonicParsing="false" text="Reply">
+               <padding>
+                  <Insets bottom="2.0" left="8.0" right="8.0" top="2.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonReplyAll" mnemonicParsing="false" text="Reply All">
+               <padding>
+                  <Insets bottom="2.0" left="8.0" right="8.0" top="2.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="buttonForward" mnemonicParsing="false" text="Forward">
+               <padding>
+                  <Insets bottom="2.0" left="8.0" right="8.0" top="2.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+      <VBox prefHeight="63.0" prefWidth="100.0">
+         <children>
+            <HBox prefHeight="21.0">
+               <children>
+                  <Label prefWidth="30.0" text="To:">
+                     <HBox.margin>
+                        <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="toHeaderMail" prefHeight="17.0" prefWidth="686.0">
+                     <HBox.margin>
+                        <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="datumHeaderMail" alignment="TOP_RIGHT" prefWidth="70.0" textAlignment="CENTER">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="21.0" prefWidth="817.0">
+               <children>
+                  <Label prefWidth="50.0" text="From:">
+                     <HBox.margin>
+                        <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="fromHeaderMail" maxWidth="-Infinity" prefHeight="17.0" prefWidth="773.0">
+                     <padding>
+                        <Insets right="5.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets bottom="2.0" left="5.0" top="2.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <Label fx:id="ueberschriftMail" maxWidth="1.7976931348623157E308">
+               <VBox.margin>
+                  <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </VBox>
+      <TextArea fx:id="textFieldMail" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>
