@@ -87,7 +87,7 @@ public class MailTableViewController implements Initializable, Observer {
     public void initialize(URL url, ResourceBundle rb) {
         tableContent = FXCollections.observableArrayList();
         contextMenu = new ContextMenu(new MenuItem("mark as unread"));
-        dV = new DateiVerwaltung("src\\xml-messages");
+        dV = new DateiVerwaltung("src");
         configureTable();
         FolderSelectionObservable.getInstance(null).addObserver(this);
     }

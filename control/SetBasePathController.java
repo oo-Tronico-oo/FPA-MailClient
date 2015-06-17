@@ -51,15 +51,24 @@ public class SetBasePathController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
         textField.setText(oldPath());
         cancel.setOnAction((e) -> ((Stage) cancel.getScene().getWindow()).close());
         ok.setOnAction((e) -> okButton());
     }
-    
+
     private void okButton(){
         File f = new File(textField.getText());
-        if (f.exists()) save();
+        if (f.exists()){
+            save();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            Stage stage = (Stage)alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("resource/Stage_icon.png"));
+            alert.setTitle("Info");
+            Label label = (Label)alert.getDialogPane().getChildren().get(1);
+            label.setAlignment(Pos.CENTER);
+            alert.setContentText("Zum setzen des neuen Rootverzeichnisses Programm neu starten");
+            alert.show();
+        }
         else{
             Alert alert = new Alert(Alert.AlertType.ERROR);
             Stage stage = (Stage)alert.getDialogPane().getScene().getWindow();
