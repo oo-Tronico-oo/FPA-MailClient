@@ -5,19 +5,34 @@
  */
 package control;
 
+import Message.Message;
+import application.DateiVerwaltung;
+import application.Resources;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import modell.ContainsSenderMailFilter;
+import modell.Directory;
+import modell.Filter;
+import modell.IsSubjectFilter;
 
 /**
  * FXML Controller class
@@ -62,18 +77,32 @@ public class MailFilterController implements Initializable {
 
     private void ersteFilterZeile() {
         filterTextField.setPromptText("John.Dow@web.de");
-        choiceBox1.getItems().addAll("From", "Read", "Priority");
-        choiceBox2.getItems().add("is");
+        choiceBox1.getItems().addAll("Sender", "Subject");
+        setChoiceBoxListener(choiceBox1, choiceBox2);
         addFilter.setOnAction((e) -> newFilterZeile());
         filterAnzahl = 1;
     }
-
+    
+    private void setChoiceBoxListener(ChoiceBox boxForListener, ChoiceBox boxForChange){
+        boxForListener.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+                if(boxForListener.getItems().get((Integer) number2).equals("Sender")){
+                    boxForChange.getItems().clear();
+                    boxForChange.getItems().add("contains");
+                }else{
+                    boxForChange.getItems().clear();
+                    boxForChange.getItems().add("is");
+                }
+            }
+        });
+    }
+    
     private void newFilterZeile() {
         if (filterAnzahl < 5) {
             vBoxFilter.getChildren().add(newHBox());
             filterAnzahl++;
-        }
-        else {
+        } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Maximale Anzahl an Filtern erreicht!");
             alert.show();
@@ -82,50 +111,82 @@ public class MailFilterController implements Initializable {
 
     private HBox newHBox() {
         HBox hb = new HBox();
-        
-        Label platzHalter1 = new Label();
-        platzHalter1.setPrefWidth(10);
-        Label platzHalter2 = new Label();
-        platzHalter2.setPrefWidth(10);
-        Label platzHalter3 = new Label();
-        platzHalter3.setPrefWidth(10);
-        
+
         ChoiceBox<String> choiceBoxOne = new ChoiceBox<>();
-        choiceBoxOne.getItems().addAll("From", "Read", "Priority");
+        choiceBoxOne.getItems().addAll("Sender", "Subject");
         choiceBoxOne.setPrefWidth(100);
-        
+
         ChoiceBox<String> choiceBoxTwo = new ChoiceBox<>();
-        choiceBoxTwo.getItems().add("is");
         choiceBoxTwo.setPrefWidth(130);
         
+        setChoiceBoxListener(choiceBoxOne, choiceBoxTwo);
+
         TextField filterTextFieldNew = new TextField();
         filterTextFieldNew.setPromptText("John.Dow@web.de");
         filterTextFieldNew.setPrefWidth(250);
-        
-        Button b = new Button();
-        b.setText("+");
-        b.setOnAction((e) -> newFilterZeile());
-        hb.setSpacing(10);
-        
-        hb.getChildren().addAll(choiceBoxOne, platzHalter1, choiceBoxTwo, platzHalter2, filterTextFieldNew, platzHalter3, b);
+
+        Button addButton = new Button();
+        addButton.setText("+");
+        addButton.setOnAction((e) -> newFilterZeile());
+
+        hb.getChildren().addAll(choiceBoxOne, choiceBoxTwo, filterTextFieldNew, addButton);
         hb.setPrefHeight(30);
+        hb.setSpacing(10);
         return hb;
     }
 
     private void filterAusgabe() {
-        int element = 0;
+//        int element = 0;
+
+        List<Message> messageList = new ArrayList<>();
+
+        TreeView<Directory> treeView = Resources.getMailTreeViewController().getNavBaum();
+        TreeItem<Directory> treeItem = treeView.getSelectionModel().getSelectedItem();
+        Directory folder = (Directory) treeItem;
+        String path = folder.getFile().getPath();
+        
+        DateiVerwaltung dateiVerwaltung = new DateiVerwaltung(path);
+
+        Filter filter = null;
         Iterator it = vBoxFilter.getChildren().iterator();
-        while(it.hasNext()){
-            HBox hb = (HBox)it.next();
-            String box1 = (String) ((ChoiceBox)hb.getChildren().get(0)).getValue();
-            String box2 = (String) ((ChoiceBox)hb.getChildren().get(2)).getValue();
-            String box3 = ((TextField)hb.getChildren().get(4)).getText();
-            
-            System.out.println("Element at col, row: 0, " + element + " has value: " + box1);
-            System.out.println("Element at col, row: 1, " + element + " has value: " + box2);
-            System.out.println("Element at col, row: 2, " + element + " has value: " + box3);
-            System.out.println();
-            element ++;
+        while (it.hasNext()) {
+            HBox hb = (HBox) it.next();
+            String box1 = (String) ((ChoiceBox) hb.getChildren().get(0)).getValue();
+            String box2 = (String) ((ChoiceBox) hb.getChildren().get(1)).getValue();
+            String box3 = ((TextField) hb.getChildren().get(2)).getText();
+            box3 = box3.trim();
+            if (box1 == null || box2 == null || box3.isEmpty()) {
+                alert();
+                continue;
+            }
+            if (box1.equals("Sender") && box2.equals("contains")) {
+                filter = new ContainsSenderMailFilter(dateiVerwaltung, box3);
+            } else if (box1.equals("Subject") && box2.equals("is")) {
+                filter = new IsSubjectFilter(dateiVerwaltung, box3);
+
+            }
+            if (filter != null) {
+                messageList.addAll(filter.getMessages());
+            }
+
+//            System.out.println("Element at col, row: 0, " + element + " has value: " + box1);
+//            System.out.println("Element at col, row: 1, " + element + " has value: " + box2);
+//            System.out.println("Element at col, row: 2, " + element + " has value: " + box3);
+//            System.out.println();
+//            element ++;
         }
+        Resources.getMailTableViewController().updateTabelle(messageList);
+        ((Stage) buttonFilter.getScene().getWindow()).close();
+    }
+
+    private void alert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image("resource/Stage_icon.png"));
+        alert.setTitle("Info");
+        Label label = (Label) alert.getDialogPane().getChildren().get(1);
+        label.setAlignment(Pos.CENTER);
+        alert.setContentText("Ein Filter wurde nicht vollständig ausgefüllt und daher ausgelassen");
+        alert.show();
     }
 }

@@ -10,10 +10,12 @@ import Message.Message;
 import Message.MessageImportance;
 import Message.MessageStakeholder;
 import application.FolderSelectionObservable;
+import application.Resources;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -76,7 +78,7 @@ public class MailTableViewController implements Initializable, Observer {
     private ContextMenu contextMenu;
     private boolean contextRead = false;
     private DateiVerwaltung dV;
-
+    
     /**
      * Initializes the controller class.
      *
@@ -86,8 +88,9 @@ public class MailTableViewController implements Initializable, Observer {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         tableContent = FXCollections.observableArrayList();
-        contextMenu = new ContextMenu(new MenuItem("mark as unread"));
+        contextMenu = new ContextMenu(new MenuItem("mark as unread"), new MenuItem("entferne Filter"));
         dV = new DateiVerwaltung("src");
+        Resources.getInstance(this);
         configureTable();
         FolderSelectionObservable.getInstance(null).addObserver(this);
     }
@@ -99,11 +102,20 @@ public class MailTableViewController implements Initializable, Observer {
         TreeItem<Directory> treeItem = treeView.getSelectionModel().getSelectedItem();
         Directory folder = (Directory) treeItem;
 
+        dV.setPath(folder.getFile().getPath());
+        updateTabelle(dV.getMessageListe());
+    }
+    
+    public void updateTabelle(List<Message> messageListe){
+        if(messageListe.isEmpty())return;
         clearMailDetail();
         tableContent.clear();
         editColumnView();
-        dV.setPath(folder.getFile().getPath());
-        tableContent.addAll(dV.getMessageListe());
+        tableContent.addAll(messageListe);
+    }
+    
+    public ObservableList<Message> getTableContent(){
+        return tableContent;
     }
 
     private void configureTable() {
@@ -121,7 +133,8 @@ public class MailTableViewController implements Initializable, Observer {
         table.setItems(tableContent);
         table.setContextMenu(contextMenu);
         table.getSelectionModel().selectedItemProperty().addListener((e) -> handleSelectedMessage());
-        contextMenu.getItems().get(0).setOnAction((e) -> handleContextItem());
+        contextMenu.getItems().get(0).setOnAction((e) -> handleContextUnread());
+        contextMenu.getItems().get(1).setOnAction((e) -> updateTabelle(dV.getMessageListe()));
     }
 
     private void editColumnView() {
@@ -131,7 +144,7 @@ public class MailTableViewController implements Initializable, Observer {
         sendColumnEdit(table.getColumns().get(3));
     }
 
-    private void handleContextItem() {
+    private void handleContextUnread() {
         contextRead = true;
         setReadStatus();
     }

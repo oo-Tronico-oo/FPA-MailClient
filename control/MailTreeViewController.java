@@ -6,6 +6,7 @@
 package control;
 
 import application.FolderSelectionObservable;
+import application.Resources;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +38,7 @@ public class MailTreeViewController implements Initializable {
     private TreeView<Directory> navBaum;
     
     private final File file = new File("src\\application", "settings.txt");
-
+    
     /**
      * Initializes the controller class.
      *
@@ -48,13 +48,18 @@ public class MailTreeViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        Directory root = new Directory(new File(path()));
+        Directory root = new Directory(new File(getPath()));
         navBaum.setRoot(root);
         navBaum.getRoot().setExpanded(true);
         FolderSelectionObservable.getInstance(navBaum);
+        Resources.getInstance(this);
     }
     
-    private String path(){
+    public TreeView<Directory> getNavBaum(){
+        return navBaum;
+    }
+    
+    private String getPath(){
         
         BufferedReader br = null;
         String path = "";
