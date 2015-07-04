@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 /**
@@ -40,12 +41,16 @@ public class SetBasePathController implements Initializable {
     private Button ok;
 
     @FXML
+    private Button choose;
+
+    @FXML
     private TextField textField;
-    
+
     private final File file = new File("src\\application", "settings.txt");
-    
+
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -54,38 +59,51 @@ public class SetBasePathController implements Initializable {
         textField.setText(oldPath());
         cancel.setOnAction((e) -> ((Stage) cancel.getScene().getWindow()).close());
         ok.setOnAction((e) -> okButton());
+        choose.setOnAction((e) -> handlechooseButton());
     }
 
-    private void okButton(){
+    private void handlechooseButton() {
+        Stage stage = new Stage();
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(new File(oldPath()));
+        File selectedDirectory = directoryChooser.showDialog(stage);
+
+        if (selectedDirectory == null) {
+            System.out.println("No Directory selected");
+        } else {
+            textField.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
+
+    private void okButton() {
         File f = new File(textField.getText());
-        if (f.exists()){
+        if (f.exists()) {
             save();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            Stage stage = (Stage)alert.getDialogPane().getScene().getWindow();
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("resource/Stage_icon.png"));
             alert.setTitle("Info");
-            Label label = (Label)alert.getDialogPane().getChildren().get(1);
+            Label label = (Label) alert.getDialogPane().getChildren().get(1);
             label.setAlignment(Pos.CENTER);
             alert.setContentText("Zum setzen des neuen Rootverzeichnisses Programm neu starten");
             alert.show();
-        }
-        else{
+        } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            Stage stage = (Stage)alert.getDialogPane().getScene().getWindow();
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("resource/Stage_icon.png"));
             alert.setTitle("Path fail");
-            Label label = (Label)alert.getDialogPane().getChildren().get(1);
+            Label label = (Label) alert.getDialogPane().getChildren().get(1);
             label.setAlignment(Pos.CENTER);
             alert.setContentText("Dieses Verzeichnis existiert nicht");
             alert.show();
         }
     }
-    
-    private String oldPath(){
-        
+
+    private String oldPath() {
+
         BufferedReader br = null;
         String path = "";
-        
+
         try {
             br = new BufferedReader(new FileReader(file));
             path = br.readLine();
@@ -102,11 +120,11 @@ public class SetBasePathController implements Initializable {
         }
         return path;
     }
-    
-    private void save(){
-        
+
+    private void save() {
+
         BufferedWriter bw;
-        
+
         try {
             bw = new BufferedWriter(new FileWriter(file));
             bw.write(textField.getText());

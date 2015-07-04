@@ -10,7 +10,7 @@ import Message.Message;
 import Message.MessageImportance;
 import Message.MessageStakeholder;
 import application.FolderSelectionObservable;
-import application.Resources;
+import application.ControllerInstanzen;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -90,7 +90,7 @@ public class MailTableViewController implements Initializable, Observer {
         tableContent = FXCollections.observableArrayList();
         contextMenu = new ContextMenu(new MenuItem("mark as unread"), new MenuItem("entferne Filter"));
         dV = new DateiVerwaltung("src");
-        Resources.getInstance(this);
+        ControllerInstanzen.getInstance(this);
         configureTable();
         FolderSelectionObservable.getInstance(null).addObserver(this);
     }

@@ -12,36 +12,36 @@ import control.MailTreeViewController;
  *
  * @author Tronico
  */
-public class Resources {
+public class ControllerInstanzen {
     
     private static MailTableViewController mailTableViewController;
     private static MailTreeViewController mailTreeViewController;
-    private static Resources instanceOfResources;
+    private static ControllerInstanzen instanceOfResources;
     
-    private Resources(MailTableViewController mailTableViewController){
-        Resources.mailTableViewController = mailTableViewController;
+    private ControllerInstanzen(MailTableViewController mailTableViewController){
+        ControllerInstanzen.mailTableViewController = mailTableViewController;
     }
-    private Resources(MailTreeViewController mailTreeViewController){
-        Resources.mailTreeViewController = mailTreeViewController;
+    private ControllerInstanzen(MailTreeViewController mailTreeViewController){
+        ControllerInstanzen.mailTreeViewController = mailTreeViewController;
     }
     
     
-    public static Resources getInstance(MailTableViewController mailTableViewController){
+    public static ControllerInstanzen getInstance(MailTableViewController mailTableViewController){
         if (instanceOfResources == null){
             if(mailTableViewController == null) throw new IllegalArgumentException("Versuch Resources zu initialisieren schlug fehl(MailTableViewController war \"null\")");
-            instanceOfResources = new Resources(mailTableViewController);
-        }else if(Resources.mailTableViewController == null){
-            Resources.mailTableViewController = mailTableViewController;
+            instanceOfResources = new ControllerInstanzen(mailTableViewController);
+        }else if(ControllerInstanzen.mailTableViewController == null){
+            ControllerInstanzen.mailTableViewController = mailTableViewController;
         }
         return instanceOfResources;
     }
     
-    public static Resources getInstance(MailTreeViewController mailTreeViewController){
+    public static ControllerInstanzen getInstance(MailTreeViewController mailTreeViewController){
         if (instanceOfResources == null){
             if(mailTreeViewController == null) throw new IllegalArgumentException("Versuch Resources zu initialisieren schlug fehl(MailTreeViewController war \"null\")");
-            instanceOfResources = new Resources(mailTreeViewController);
-        }else if(Resources.mailTreeViewController == null){
-            Resources.mailTreeViewController = mailTreeViewController;
+            instanceOfResources = new ControllerInstanzen(mailTreeViewController);
+        }else if(ControllerInstanzen.mailTreeViewController == null){
+            ControllerInstanzen.mailTreeViewController = mailTreeViewController;
         }
         return instanceOfResources;
     }

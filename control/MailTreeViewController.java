@@ -6,7 +6,7 @@
 package control;
 
 import application.FolderSelectionObservable;
-import application.Resources;
+import application.ControllerInstanzen;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,7 +52,7 @@ public class MailTreeViewController implements Initializable {
         navBaum.setRoot(root);
         navBaum.getRoot().setExpanded(true);
         FolderSelectionObservable.getInstance(navBaum);
-        Resources.getInstance(this);
+        ControllerInstanzen.getInstance(this);
     }
     
     public TreeView<Directory> getNavBaum(){

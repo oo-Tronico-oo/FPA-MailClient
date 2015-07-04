@@ -7,7 +7,7 @@ package control;
 
 import Message.Message;
 import application.DateiVerwaltung;
-import application.Resources;
+import application.ControllerInstanzen;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -140,7 +140,7 @@ public class MailFilterController implements Initializable {
 
         List<Message> messageList = new ArrayList<>();
 
-        TreeView<Directory> treeView = Resources.getMailTreeViewController().getNavBaum();
+        TreeView<Directory> treeView = ControllerInstanzen.getMailTreeViewController().getNavBaum();
         TreeItem<Directory> treeItem = treeView.getSelectionModel().getSelectedItem();
         Directory folder = (Directory) treeItem;
         String path = folder.getFile().getPath();
@@ -175,7 +175,7 @@ public class MailFilterController implements Initializable {
 //            System.out.println();
 //            element ++;
         }
-        Resources.getMailTableViewController().updateTabelle(messageList);
+        ControllerInstanzen.getMailTableViewController().updateTabelle(messageList);
         ((Stage) buttonFilter.getScene().getWindow()).close();
     }
 

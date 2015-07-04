@@ -5,12 +5,13 @@
  */
 package control;
 
-import application.Resources;
+import application.ControllerInstanzen;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -70,7 +71,7 @@ public class MailRootViewController implements Initializable {
 
     private void menuAction() {
 
-        file.getItems().get(0).setOnAction((e) -> menuHandle(e));
+        file.getItems().get(0).setOnAction((e) -> Platform.exit());
         edit.getItems().get(0).setOnAction((e) -> dialogSBP());
         filter.getItems().get(0).setOnAction((e) -> dialogFilter());
         help.getItems().get(0).setOnAction((e) -> dialogAbout());
@@ -84,7 +85,7 @@ public class MailRootViewController implements Initializable {
     }
     
     private void dialogFilter(){
-        if(Resources.getMailTableViewController().getTableContent().isEmpty()){
+        if(ControllerInstanzen.getMailTableViewController().getTableContent().isEmpty()){
             alert("Keine Mails vorhanden");
             return;
         }
